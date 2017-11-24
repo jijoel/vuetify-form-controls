@@ -1,0 +1,17 @@
+{
+    "name": "vuetify-form-controls",
+    "version": "0.1.0",
+    "description": "form controls for vuetify",
+    "author": "Joel Hatch <jijoel@yahoo.com>",
+    "license": "MIT",
+    "main": "src/index.js",
+    "dependencies": {
+        "simple-load-script": "^1.0.2"
+    },
+    "peerDependencies": {
+        "vuetify": "^0.17.0"
+    },
+    "moduleDirectories": [
+      "node_modules"
+    ]
+}
