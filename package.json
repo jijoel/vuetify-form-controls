@@ -5,13 +5,23 @@
     "author": "Joel Hatch <jijoel@yahoo.com>",
     "license": "MIT",
     "main": "src/index.js",
+    "scripts": {
+        "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/*.spec.js",
+        "watch": "npm run test -- --watch"
+    },
+    "devDependencies": {
+        "expect": "^21.2.1",
+        "jsdom": "^11.5.1",
+        "jsdom-global": "^3.0.2",
+        "mocha": "^4.0.1",
+        "mocha-webpack": "^1.0.1",
+        "vue-loader": "^13.6.0",
+        "vue-template-compiler": "^2.5.11",
+        "vue-test-utils": "^1.0.0-beta.8",
+        "webpack": "^3.10.0"
+    },
     "dependencies": {
-        "simple-load-script": "^1.0.2"
-    },
-    "peerDependencies": {
-        "vuetify": "^0.17.0"
-    },
-    "moduleDirectories": [
-      "node_modules"
-    ]
+        "vue": "^2.5",
+        "vuetify": "^v1.0.0-alpha.3"
+    }
 }

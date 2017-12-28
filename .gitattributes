@@ -5,4 +5,4 @@
 /test export-ignore
 /CHANGELOG.md export-ignore
 /README.md export-ignore
-/version.txt export-ignore
+/webpack.config.js export-ignore
