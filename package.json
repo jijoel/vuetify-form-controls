@@ -1,6 +1,6 @@
 {
     "name": "vuetify-form-controls",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "form controls for vuetify",
     "author": "Joel Hatch <jijoel@yahoo.com>",
     "license": "MIT",
@@ -21,6 +21,7 @@
         "webpack": "^3.10.0"
     },
     "dependencies": {
+        "date-fns": "^1.29.0",
         "vue": "^2.5",
         "vuetify": "^v1.0.0-alpha.3"
     }
