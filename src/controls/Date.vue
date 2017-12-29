@@ -1,32 +1,81 @@
 <template>
-
   <v-menu
     offset-y
     full-width
     max-width="290px"
     min-width="290px"
-    v-model="isOpen"
+    v-model="show_picker"
     :lazy="lazy"
-    :close-on-click="true"
-    :close-on-content-click="true"
+    :close-on-content-click="false"
     :transition="transition"
   >
+
     <v-text-field
       slot="activator"
-      autocomplete="off"
       v-model="formatted_date"
+      autocomplete="off"
+      @blur='onTextBlur'
+
+      :append-icon-cb="appendIconCb"
+      :append-icon="appendIcon"
+      :auto-grow="autoGrow"
+      :autofocus="autofocus"
+      :box="box"
+      :clearable="clearable"
+      :color="color"
+      :counter="counter"
+      :dark="dark"
+      :disabled="disabled"
+      :dont-fill-mask-blanks="dontFillMaskBlanks"
+      :error-messages="getErrorMessages"
+      :error="error"
+      :full-width="fullWidth"
+      :hide-details="hideDetails"
+      :hint="hint"
       :label="label"
-      :required="required"
+      :light="light"
+      :loading="loading"
+      :mask="mask"
+      :multi-line="multiLine"
+      :persistent-hint="persistentHint"
+      :placeholder="placeholder"
+      :prefix="prefix"
+      :prepend-icon-cb="prependIconCb"
       :prepend-icon="prependIcon"
-      :error-messages="errorMessages"
-      @blur="onBlur"
+      :readonly="readonly"
+      :required="required"
+      :return-masked-value="returnMaskedValue"
+      :rows="rows"
+      :rules="rules"
+      :single-line="singleLine"
+      :solo="solo"
+      :suffix="suffix"
+      :tabindex="tabindex"
+      :textarea="textarea"
+      :toggle-keys="toggleKeys"
+      :type="type"
+      :validate-on-blur="validateOnBlur"
+      :value="value"
+
     ></v-text-field>
+
     <v-date-picker
       no-title
-      v-model="date_model"
+      v-model="internal_date"
+      @input="onPickerInput"
+      :autosave="true"
+
+      :actions="actions"
       :allowed-dates="allowedDates"
-    >
-    </v-date-picker>
+      :color="color"
+      :dark="dark"
+      :first-day-of-week="firstDayOfWeek"
+      :landscape="landscape"
+      :light="light"
+      :scrollable="scrollable"
+      :year-icon="yearIcon"
+    ></v-date-picker>
+
   </v-menu>
 
 </template>
@@ -34,30 +83,75 @@
 <script>
 import getYear from 'date-fns/get_year'
 import setYear from 'date-fns/set_year'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
+import formatDate from 'date-fns/format'
+import parseDate from 'date-fns/parse'
 import isValidDate from 'date-fns/is_valid'
 
 export default {
 
-  data() {
-    return {
-      dateMenu: null,
-      workspace: null,
-      dirty: false,
-      touched: false,
-    }
-  },
+  data: () => ({
+    show_picker: false,
+    formatted_date: null,
+    internal_date: null,
+    error_messages: [],
+  }),
+
 
   props: {
-    allowedDates: null,
-    value: {},
-    yearIcon: {},
+    // Inherited from VTextField
+    appendIconCb: null,
+    appendIcon: null,
+    autoGrow: null,
+    autofocus: null,
+    box: null,
+    clearable: null,
+    color: null,
+    counter: null,
+    dark: null,
+    disabled: null,
+    dontFillMaskBlanks: null,
+    errorMessages: null,
+    error: null,
+    fullWidth: null,
+    hideDetails: null,
+    hint: null,
+    label: null,
+    light: null,
+    loading: null,
+    mask: null,
+    multiLine: null,
+    persistentHint: null,
+    placeholder: null,
+    prefix: null,
+    prependIconCb: null,
+    prependIcon: null,
+    readonly: null,
+    required: null,
+    returnMaskedValue: null,
+    rows: null,
+    rules: null,
+    singleLine: null,
+    solo: null,
+    suffix: null,
+    tabindex: null,
+    textarea: null,
+    toggleKeys: null,
+    type: null,
+    validateOnBlur: null,
+    value: null,
 
-    errorMessages: {
-      type: Array,
-      default: [],
-    },
+    // Inherited from VDatePicker
+    actions: null,
+    allowedDates: null,
+    color: null,
+    dark: null,
+    firstDayOfWeek: null,
+    landscape: null,
+    light: null,
+    scrollable: null,
+    yearIcon: null,
+
+    // Specific to this control
     format: {
       type: String,
       default: 'M/D/YYYY',
@@ -74,10 +168,6 @@ export default {
       type: String,
       default: 'event',
     },
-    required: {
-      type: Boolean,
-      default: false,
-    },
     transition: {
       type: String,
       default: 'scale-transition'
@@ -85,82 +175,62 @@ export default {
     useCurrentYear: {
       type: Boolean,
       default: true,
-    }
+    },
   },
 
   computed: {
+    getErrorMessages() {
+      if (!this.errorMessages)
+        return this.error_messages
 
-    isOpen: {
-      get() { return this.dateMenu },
-      set(v) {
-        this.touched = true
-        this.dateMenu = v
-      }
-    },
-
-    formatted_date: {
-      get() {
-        return (this.workspace || this.dirty || !this.value)
-          ? this.workspace
-          : format(this.value, this.format)
-      },
-      set(v) {
-        this.dirty = true
-        this.workspace = v
-      },
-    },
-
-    date_model: {
-      get() { return this.value },
-      set(v) {
-        this.workspace = this.dirty = this.touched = null
-        this.$emit('input', v)
-      },
+      return this.error_messages.concat(this.errorMessages)
     }
   },
 
   methods: {
-    onBlur() {
-      if (! this.dirty && ! this.touched)
-        return
-
-      this.syncDateValues(this.formatted_date)
-      this.$emit('blur')  // to work with vee-validate
+    onPickerInput() {
+      this.synchronizeDates(this.internal_date)
     },
 
-    syncDateValues(data) {
-      const date = this.getValidatedDate(data)
-      if (! date) {
-        return this.date_model = null
-      }
-
-      this.workspace = this.dirty = null
-      this.date_model = format(date, 'YYYY-MM-DD')
+    onTextBlur() {
+      this.synchronizeDates(this.formatted_date)
+      this.$emit('blur')
     },
 
-    // run validation rules on the data entered
-    // (either selected in the picker
-    // or entered in the text box)
+    synchronizeDates(newDate) {
+      const date = this.getValidatedDate(newDate)
+
+      this.internal_date = (date)
+        ? formatDate(date, 'YYYY-MM-DD')
+        : ''
+
+      this.formatted_date = (date)
+        ? formatDate(date, this.format)
+        : newDate
+
+        this.$emit('input', this.internal_date)
+    },
+
     getValidatedDate(d) {
       if (! d)
         return
 
-      var date = parse(d)
+      var date = parseDate(d)
       if (! isValidDate(date))
-        return
+        return this.setError('Invalid date specified')
 
-      // If a shortcut M/D was entered, use current year
       if (this.useCurrentYear && getYear(date) == '2001')
         date = setYear(date, getYear(Date()))
 
-      if (! this.isAllowed(format(date,'YYYY-MM-DD')))
-        return
+      if (! this.isAllowed(formatDate(date,'YYYY-MM-DD')))
+        return this.setError('Requested date is not allowed')
 
+      this.setError(null)
       return date
     },
 
     // Make sure the given date is allowed;
-    // copied directly from vuetify
+    // copied directly from vuetify VDatePicker.js
     isAllowed (date) {
       if (!this.allowedDates) return true
 
@@ -179,9 +249,14 @@ export default {
 
       return true
     },
+
+    setError(err) {
+      if (! err)
+        this.error_messages = []
+      else
+        this.error_messages = [ err ]
+    },
   },
 
 }
-
 </script>
-
