@@ -2,9 +2,9 @@
   <v-menu
     offset-y
     full-width
-    max-width="290px"
-    min-width="290px"
     v-model="show_picker"
+    :max-width="width"
+    :min-width="width"
     :lazy="lazy"
     :close-on-content-click="false"
     :transition="transition"
@@ -176,6 +176,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    width: {
+      type: [Number, String],
+      default: '290px'
+    }
   },
 
   computed: {
