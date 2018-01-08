@@ -74,7 +74,20 @@
       :light="light"
       :scrollable="scrollable"
       :year-icon="yearIcon"
-    ></v-date-picker>
+    >
+      <template slot-scope="actions" v-if="actions">
+        <v-card-actions class="pt-0">
+          <v-spacer></v-spacer>
+          <v-btn flat color="primary" @click="today">
+            Today
+          </v-btn>
+          <v-btn flat color="primary" @click="clear">
+            Clear
+          </v-btn>
+        </v-card-actions>
+      </template>
+
+    </v-date-picker>
 
   </v-menu>
 
@@ -141,7 +154,7 @@ export default {
     value: null,
 
     // Inherited from VDatePicker
-    actions: null,
+    // actions: null,
     allowedDates: null,
     color: null,
     dark: null,
@@ -152,6 +165,10 @@ export default {
     yearIcon: null,
 
     // Specific to this control
+    actions: {
+      type: Boolean,
+      default: false,
+    },
     format: {
       type: String,
       default: 'M/D/YYYY',
@@ -182,6 +199,10 @@ export default {
     }
   },
 
+  created() {
+    this.synchronizeDates(this.value)
+  },
+
   computed: {
     getErrorMessages() {
       if (!this.errorMessages)
@@ -192,12 +213,24 @@ export default {
   },
 
   methods: {
+    clear() {
+      this.synchronizeDates('')
+      this.show_picker = false
+    },
+
+    today() {
+      this.synchronizeDates(Date())
+      this.show_picker = false
+    },
+
     onPickerInput() {
       this.synchronizeDates(this.internal_date)
+      this.$emit('input', this.internal_date)
     },
 
     onTextBlur() {
       this.synchronizeDates(this.formatted_date)
+      this.$emit('input', this.internal_date)
       this.$emit('blur')
     },
 
@@ -211,8 +244,6 @@ export default {
       this.formatted_date = (date)
         ? formatDate(date, this.format)
         : newDate
-
-        this.$emit('input', this.internal_date)
     },
 
     getValidatedDate(d) {
@@ -261,6 +292,12 @@ export default {
         this.error_messages = [ err ]
     },
   },
+
+  watch: {
+    value() {
+      this.synchronizeDates(this.value)
+    }
+  }
 
 }
 </script>
