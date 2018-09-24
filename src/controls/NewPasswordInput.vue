@@ -14,7 +14,15 @@
   :browser-autocomplete="browserAutocomplete"
   :hint="passwordMessage"
   :persistentHint="true"
-></v-text-field>
+  :loading="true"
+>
+  <v-progress-linear
+    slot="progress"
+    :value="passwordProgress"
+    :color="passwordColor"
+    height="2"
+  ></v-progress-linear>
+</v-text-field>
 </template>
 
 <script>
@@ -92,15 +100,20 @@ export default {
         : 'password'
     },
     passwordProgress() {
-      return this.password_strength.score * 25
+      return Math.min(100, this.value.length * 10)
     },
     passwordColor () {
-      return ['error', 'warning', 'success'][Math.floor(this.passwordProgress / 40)]
+      var strength = this.password_strength.score * 25
+        - this.password_pwned
+      if (strength < 0)
+        strength = 0
+
+      return ['error', 'warning', 'success'][Math.floor(strength / 40)]
     },
     passwordMessage() {
       var message = ''
       if (this.password_pwned)
-        message += this.password_pwned
+        message += this.pwnedMessage
 
       if (this.password_strength.feedback.warning)
         message += '⚠️ ' + this.password_strength.feedback.warning + '. '
@@ -110,7 +123,20 @@ export default {
           + this.password_strength.feedback.suggestions.join(' ') + '. '
 
       return message.replace('..', '.')
-    }
+    },
+    pwnedMessage() {
+      if (! this.password_pwned) return ''
+
+      const pwned = [
+          {n:10, b:'⚠️', f:'some', s:'questionable'},
+          {n:100, b:'⚠️', f:'dozens of', s:'not secure'},
+          {n:1000, b:'⚠️', f:'hundreds of', s:'highly insecure'},
+          {n:100000, b:'🛑', f:'thousands of', s:'dangerously insecure'},
+          {n:Number.MAX_SAFE_INTEGER, b:'🛑', f:'over 100,000', s:'very dangerous to use'},
+        ].find(cur => this.password_pwned <= cur.n)
+
+        return `${pwned.b} Warning: This password is known to have been exposed in ${pwned.f} data breaches. It is ${pwned.s}. Please consider using a different password. `
+    },
   },
 
   methods: {
@@ -136,24 +162,14 @@ export default {
     },
     checkPasswordPwned() {
       if (!this.value || typeof hibp === 'undefined')
-        return
+        return this.password_pwned = 0
 
       hibp.pwnedPassword(this.value)
       .then(n => {
-        if (n === 0)
-          return this.password_pwned = null
-
-        const pwned = [
-          {n:10, b:'⚠️', f:'some', s:'questionable'},
-          {n:100, b:'⚠️', f:'dozens of', s:'not secure'},
-          {n:1000, b:'⚠️', f:'hundreds of', s:'highly insecure'},
-          {n:100000, b:'🛑', f:'thousands of', s:'dangerously insecure'},
-          {n:Number.MAX_SAFE_INTEGER, b:'🛑', f:'over 100,000', s:'very dangerous to use'},
-        ].find(cur => n <= cur.n)
-
-        this.password_pwned = `${pwned.b} Warning: This password has been exposed in ${pwned.f} data breaches. It is ${pwned.s}. Please consider using a different password. `
+        this.password_pwned = n
       })
-    }  },
+    },
+  },
 
 }
 </script>
