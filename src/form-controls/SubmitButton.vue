@@ -3,12 +3,11 @@
   v-bind="$attrs"
   v-on="$listeners"
   :color="color"
-  :label="label"
-  :loading="form.busy"
-  :disabled="form.busy"
+  :loading="loading || form.busy"
+  :disabled="disabled || form.busy || form.errors.any()"
   type="submit"
 >
-  {{ label }}
+  <slot>{{ label }}</slot>
 </v-btn>
 </template>
 
@@ -20,18 +19,27 @@ export default {
   inheritAttrs: false,
 
   props: {
+    form: {
+      type: Object,
+      required: true,
+    },
     color: {
       type: String,
       default: 'primary'
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     label: {
       type: String,
       default: 'Submit',
     },
-    form: {
-      type: Object,
-      required: true,
+    loading: {
+      type: Boolean,
+      default: false,
     },
-  }
+  },
+
 }
 </script>
