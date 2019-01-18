@@ -3,8 +3,8 @@
   v-bind="$attrs"
   v-on="$listeners"
   :color="color"
-  :loading="loading || form.busy"
-  :disabled="disabled || form.busy || form.errors.any()"
+  :loading="form.busy"
+  :disabled="form.busy"
   type="submit"
 >
   <slot>{{ label }}</slot>
@@ -19,27 +19,18 @@ export default {
   inheritAttrs: false,
 
   props: {
-    form: {
-      type: Object,
-      required: true,
-    },
     color: {
       type: String,
       default: 'primary'
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
     },
     label: {
       type: String,
       default: 'Submit',
     },
-    loading: {
-      type: Boolean,
-      default: false,
+    form: {
+      type: Object,
+      required: true,
     },
-  },
-
+  }
 }
 </script>

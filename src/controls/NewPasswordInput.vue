@@ -1,119 +1,74 @@
 <template>
-<v-text-field
+<password-input
   :value="value"
   v-bind="$attrs"
-  v-on="$listeners"
+  v-on="listeners"
   @input="input"
   @blur="blur"
-  :name="name"
   :label="label"
-  :type="passwordType"
-  :prepend-icon="prependIcon"
-  :append-icon="passwordIcon"
-  @click:append="show_password=!show_password"
-  :browser-autocomplete="browserAutocomplete"
-  :hint="passwordMessage"
+  :hint="message"
   :persistentHint="true"
-  :loading="true"
+  :loading="!!value.length"
 >
   <v-progress-linear
     slot="progress"
-    :value="passwordProgress"
-    :color="passwordColor"
+    :value="progress"
+    :color="color"
     height="2"
   ></v-progress-linear>
-</v-text-field>
+</password-input>
 </template>
 
 <script>
+// These are external scripts to run to check password strength
+// They will be loaded when the control is initialized
+//
+// zxcvbn - check password as it is being entered
+// hibp - has the enterd password been pwned? How often?
+const strengthCheckers = {
+  zxcvbn: 'https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js',
+  hibp: 'https://unpkg.com/hibp@7.1.3/dist/hibp.min.js',
+}
+import ChildControl from '../mixins/ChildControl'
+import PasswordInput from './PasswordInput'
+
 export default {
 
   name: 'NewPasswordInput',
 
-  inheritAttrs: false,
+  mixins: [ ChildControl ],
+  components: { 'password-input': PasswordInput },
 
   props: {
-    name: {
-      type: String,
-      default: 'password'
-    },
-    browserAutocomplete: {
-      type: String,
-      default: 'current-password'
-    },
-    hideIcon: {
-      type: [Boolean, String],
-      default: false
-    },
     label: {
       type: String,
       default: 'New Password'
     },
-    prependIcon: {
-      type: String,
-      default: 'vpn_key'
-    },
-    value: {
-      type: String,
-      default: null,
-    }
   },
 
   data: () => ({
-    show_password: false,
     password_pwned: null,
     password_strength: {
       score: 0,
-      feedback: {warning: null, suggestions: []}
+      feedback: {warning: null, suggestions: []},
     },
   }),
 
   created() {
-    // Include zxcvbn for password strength meters
-    if (typeof zxcvbn === 'undefined') {
-      var zxcvbnTag = document.createElement('script');
-      zxcvbnTag.src = 'https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js';
-      document.body.appendChild(zxcvbnTag);
-    }
-
-    // Include hibp to see if the password is in a
-    // list of pwned passwords (and warn the user, if needed)
-    if (typeof hibp === 'undefined') {
-      var hibpTag = document.createElement('script');
-      hibpTag.src = 'https://unpkg.com/hibp@7.1.3/dist/hibp.min.js'
-      document.body.appendChild(hibpTag)
-    }
+    this.loadPasswordStrengthCheckers()
   },
 
   computed: {
-    passwordIcon() {
-      if (this.hideIcon)
-        return ''
-
-      return (this.show_password)
-        ? 'visibility_off'
-        : 'visibility'
+    progress() {
+      return this.password_strength.score * 25
     },
-    passwordType() {
-      return (this.show_password)
-        ? 'text'
-        : 'password'
+    color () {
+      return ['error', 'warning', 'success'][Math.floor(this.progress / 40)]
     },
-    passwordProgress() {
-      return Math.min(100, this.value.length * 10)
-    },
-    passwordColor () {
-      var strength = this.password_strength.score * 25
-        - this.password_pwned
-      if (strength < 0)
-        strength = 0
-
-      return ['error', 'warning', 'success'][Math.floor(strength / 40)]
-    },
-    passwordMessage() {
+    message() {
       var message = ''
       if (this.password_pwned)
-        message += this.pwnedMessage
+        message += this.password_pwned
 
       if (this.password_strength.feedback.warning)
         message += '⚠️ ' + this.password_strength.feedback.warning + '. '
@@ -123,52 +78,53 @@ export default {
           + this.password_strength.feedback.suggestions.join(' ') + '. '
 
       return message.replace('..', '.')
-    },
-    pwnedMessage() {
-      if (! this.password_pwned) return ''
-
-      const pwned = [
-          {n:10, b:'⚠️', f:'some', s:'questionable'},
-          {n:100, b:'⚠️', f:'dozens of', s:'not secure'},
-          {n:1000, b:'⚠️', f:'hundreds of', s:'highly insecure'},
-          {n:100000, b:'🛑', f:'thousands of', s:'dangerously insecure'},
-          {n:Number.MAX_SAFE_INTEGER, b:'🛑', f:'over 100,000', s:'very dangerous to use'},
-        ].find(cur => this.password_pwned <= cur.n)
-
-        return `${pwned.b} Warning: This password is known to have been exposed in ${pwned.f} data breaches. It is ${pwned.s}. Please consider using a different password. `
-    },
+    }
   },
 
   methods: {
-    blur() {
-      this.$emit('blur')
-    },
-    input(value) {
-      this.$emit('input', value)
-    },
     blur() {
       this.checkPasswordPwned()
       this.$emit('blur')
     },
     input(value) {
-      this.checkPasswordStrength()
+      this.checkPasswordStrength(value)
       this.$emit('input', value)
     },
-    checkPasswordStrength() {
+    loadPasswordStrengthCheckers() {
+      Object.keys(strengthCheckers).filter((key) => {
+        return (typeof window[key] !== 'function')
+      }).map((key) => {
+        var tag = document.createElement('script')
+        tag.src = strengthCheckers[key]
+        document.body.appendChild(tag)
+      })
+    },
+    checkPasswordStrength(value) {
       this.password_pwned = null
-      this.password_strength = (this.value && typeof zxcvbn !== 'undefined')
-        ? zxcvbn(this.value)
+      this.password_strength = (!!value && typeof zxcvbn === 'function')
+        ? zxcvbn(value)
         : {score: 0, feedback: {warning: null, suggestions: []}}
     },
     checkPasswordPwned() {
-      if (!this.value || typeof hibp === 'undefined')
-        return this.password_pwned = 0
+      if (!this.value || typeof hibp !== 'function')
+        return
 
       hibp.pwnedPassword(this.value)
       .then(n => {
-        this.password_pwned = n
+        if (n === 0)
+          return this.password_pwned = null
+
+        const pwned = [
+          {n:10, b:'⚠️', f:'some', s:'questionable'},
+          {n:100, b:'⚠️', f:'dozens of', s:'not secure'},
+          {n:1000, b:'⚠️', f:'hundreds of', s:'highly insecure'},
+          {n:100000, b:'🛑', f:'thousands of', s:'dangerously insecure'},
+          {n:Number.MAX_SAFE_INTEGER, b:'🛑', f:'over 100,000', s:'very dangerous to use'},
+        ].find(cur => n <= cur.n)
+
+        this.password_pwned = `${pwned.b} Warning: This password has been exposed in ${pwned.f} data breaches. It is ${pwned.s}. Please consider using a different password. `
       })
-    },
+    }
   },
 
 }

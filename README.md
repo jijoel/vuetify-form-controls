@@ -25,7 +25,7 @@ Enter this in dependencies in your package.json file:
 
 or:
 
-    yarn add jijoel/vuetify-form-controls#master
+    yarn add https://github.com/jijoel/vuetify-form-controls#master
 
 
 Usage

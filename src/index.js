@@ -1,4 +1,13 @@
-export { default as EmailInput } from './controls/EmailInput'
-export { default as NewPasswordInput } from './controls/NewPasswordInput'
-export { default as PasswordInput } from './controls/PasswordInput'
-export { default as SubmitButton } from './form-controls/SubmitButton'
+import EmailInput from './controls/EmailInput'
+import PasswordInput from './controls/PasswordInput'
+import NewPasswordInput from './controls/NewPasswordInput'
+import SocialLoginButton from './controls/SocialLoginButton'
+import SubmitButton from './controls/SubmitButton'
+
+export {
+    EmailInput,
+    PasswordInput,
+    NewPasswordInput,
+    SocialLoginButton,
+    SubmitButton,
+}

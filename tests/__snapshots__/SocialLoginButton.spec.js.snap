@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SocialLoginButton it renders a facebook button 1`] = `
+<v-tooltip-stub
+  closedelay="200"
+  debounce="0"
+  fixed="true"
+  opendelay="200"
+  tag="span"
+  top=""
+>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    icon="true"
+    tag="button"
+    type="button"
+  >
+    <v-icon-stub
+      color="#3B5998"
+    >
+      
+      fab fa-facebook-square
+    
+    </v-icon-stub>
+  </v-btn-stub>
+   
+  <span>
+    
+    login_with facebook
+  
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`SocialLoginButton it renders a github button 1`] = `
+<v-tooltip-stub
+  closedelay="200"
+  debounce="0"
+  fixed="true"
+  opendelay="200"
+  tag="span"
+  top=""
+>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    icon="true"
+    tag="button"
+    type="button"
+  >
+    <v-icon-stub
+      color="#666"
+    >
+      
+      fab fa-github
+    
+    </v-icon-stub>
+  </v-btn-stub>
+   
+  <span>
+    
+    login_with github
+  
+  </span>
+</v-tooltip-stub>
+`;
+
+exports[`SocialLoginButton it renders a standard button 1`] = `
+<v-tooltip-stub
+  closedelay="200"
+  debounce="0"
+  fixed="true"
+  opendelay="200"
+  tag="span"
+  top=""
+>
+  <v-btn-stub
+    activeclass="v-btn--active"
+    icon="true"
+    tag="button"
+    type="button"
+  >
+    <v-icon-stub
+      color="#666"
+    >
+      
+      fas fa-user-circle
+    
+    </v-icon-stub>
+  </v-btn-stub>
+   
+  <span>
+    
+    login_with foo
+  
+  </span>
+</v-tooltip-stub>
+`;

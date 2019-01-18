@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubmitButton it can have label in prop 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  color="primary"
+  tag="button"
+  type="submit"
+>
+  Do it
+</v-btn-stub>
+`;
+
+exports[`SubmitButton it can show loading status when form is busy 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  color="primary"
+  disabled="true"
+  loading="true"
+  tag="button"
+  type="submit"
+>
+  Submit
+</v-btn-stub>
+`;
+
+exports[`SubmitButton it has a slot for a label 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  color="primary"
+  tag="button"
+  type="submit"
+>
+  Do it
+</v-btn-stub>
+`;
+
+exports[`SubmitButton it is rendered as custom vuetify button 1`] = `
+<v-btn-stub
+  activeclass="v-btn--active"
+  color="primary"
+  tag="button"
+  type="submit"
+>
+  Submit
+</v-btn-stub>
+`;

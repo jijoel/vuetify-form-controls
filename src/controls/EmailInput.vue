@@ -7,18 +7,20 @@
   @blur="blur"
   type="email"
   :name="name"
-  :browser-autocomplete="browserAutocomplete"
   :label="label"
+  :browser-autocomplete="browserAutocomplete"
   :prepend-icon="prependIcon"
 ></v-text-field>
 </template>
 
 <script>
+import ChildControl from '../mixins/ChildControl'
+
 export default {
 
   name: 'EmailInput',
 
-  inheritAttrs: false,
+  mixins: [ ChildControl ],
 
   props: {
     name: {
@@ -37,19 +39,7 @@ export default {
       required: false,
       default: 'email'
     },
-    value: {
-      type: String,
-      default: null,
-    }
   },
 
-  methods: {
-    blur() {
-      this.$emit('blur')
-    },
-    input(value) {
-      this.$emit('input', value)
-    },
-  },
 }
 </script>

@@ -1,28 +1,77 @@
 {
-    "name": "vuetify-form-controls",
-    "version": "0.2.0",
-    "description": "form controls for vuetify",
-    "author": "Joel Hatch <jijoel@yahoo.com>",
-    "license": "MIT",
-    "main": "src/index.js",
-    "scripts": {
-        "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/*.spec.js",
-        "watch": "npm run test -- --watch"
+  "name": "vuetify-form-controls",
+  "version": "0.3.0",
+  "description": "form controls for vuetify",
+  "author": "Joel Hatch <jijoel@yahoo.com>",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "vue-cli-service test:unit",
+    "watch": "vue-cli-service test:unit --watch"
+  },
+  "dependencies": {
+    "vue": "^2.5.21",
+    "vuetify": "^1.4.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-plugin-unit-jest": "^3.3.0",
+    "@vue/cli-service": "^3.3.0",
+    "@vue/test-utils": "^1.0.0-beta.20",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "jest-mock-axios": "^2.1.11",
+    "vue-template-compiler": "^2.5.21"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
     },
-    "devDependencies": {
-        "expect": "^23.6",
-        "jsdom": "^12.0",
-        "jsdom-global": "^3.0.2",
-        "mocha": "^5.2",
-        "mocha-webpack": "^1.0.1",
-        "vue-loader": "^15.4",
-        "vue-template-compiler": "^2.5.11",
-        "vue-test-utils": "^1.0.0-beta.8",
-        "webpack": "^4.19"
-    },
-    "dependencies": {
-        "date-fns": "^1.29.0",
-        "vue": "^2.5",
-        "vuetify": "^v1.0"
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
     }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ],
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      "^.+\\.vue$": "vue-jest",
+      ".+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$": "jest-transform-stub",
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "snapshotSerializers": [
+      "jest-serializer-vue"
+    ],
+    "testMatch": [
+      "**/tests/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
+    ],
+    "testURL": "http://localhost/"
+  }
 }

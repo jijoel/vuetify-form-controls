@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmailInput is rendered as custom vuetify text field 1`] = `
+<v-text-field-stub
+  browser-autocomplete="email"
+  label="E-Mail Address"
+  name="email"
+  prepend-icon="email"
+  type="email"
+  value=""
+/>
+`;
+
+exports[`EmailInput renders properties sent by parent 1`] = `
+<v-text-field-stub
+  :solo="true"
+  browser-autocomplete="email"
+  label="E-Mail Address"
+  name="email"
+  prepend-icon="email"
+  type="email"
+  value=""
+/>
+`;

@@ -2,7 +2,7 @@
 <v-text-field
   :value="value"
   v-bind="$attrs"
-  v-on="$listeners"
+  v-on="listeners"
   @input="input"
   @blur="blur"
   :name="name"
@@ -12,15 +12,22 @@
   :append-icon="passwordIcon"
   @click:append="show_password=!show_password"
   :browser-autocomplete="browserAutocomplete"
-></v-text-field>
+>
+  <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot"/>
+  <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="scope">
+    <slot :name="slot" v-bind="scope"/>
+  </template>
+</v-text-field>
 </template>
 
 <script>
+import ChildControl from '../mixins/ChildControl'
+
 export default {
 
   name: 'PasswordInput',
 
-  inheritAttrs: false,
+  mixins: [ ChildControl ],
 
   props: {
     name: {
@@ -43,10 +50,6 @@ export default {
       type: String,
       default: 'vpn_key'
     },
-    value: {
-      type: String,
-      default: null,
-    }
   },
 
   data: () => ({
@@ -54,6 +57,14 @@ export default {
   }),
 
   computed: {
+      progress () {
+        const x = Math.min(100, this.value.length * 10)
+        console.log(x)
+        return x
+      },
+      color () {
+        return ['error', 'warning', 'success'][Math.floor(this.progress / 40)]
+      },
     passwordIcon() {
       if (this.hideIcon)
         return ''
@@ -66,15 +77,6 @@ export default {
       return (this.show_password)
         ? 'text'
         : 'password'
-    },
-  },
-
-  methods: {
-    blur() {
-      this.$emit('blur')
-    },
-    input(value) {
-      this.$emit('input', value)
     },
   },
 
