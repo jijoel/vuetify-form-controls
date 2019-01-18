@@ -28,11 +28,11 @@ export default {
     name: {
       type: String,
       required: true,
-    }
+    },
     path: {
       type: String,
       required: false,
-      default '/api/oauth/'
+      default: '/api/oauth/'
     }
   },
 

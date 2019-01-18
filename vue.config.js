@@ -1,3 +1,11 @@
 module.exports = {
-  lintOnSave: false
+  lintOnSave: false,
+  configureWebpack: config => {
+    config.externals = {
+       ...config.externals,
+      'axios': 'axios',
+      'vuetify': 'vuetify'
+    }
+  }
 }
+

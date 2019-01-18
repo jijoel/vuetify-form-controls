@@ -4,8 +4,9 @@
   "description": "form controls for vuetify",
   "author": "Joel Hatch <jijoel@yahoo.com>",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "./dist/vuetify-form-controls.js",
   "scripts": {
+    "build": "vue-cli-service build --target lib ./src/index.js",
     "test": "vue-cli-service test:unit",
     "watch": "vue-cli-service test:unit --watch"
   },
