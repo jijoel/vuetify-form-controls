@@ -38,3 +38,4 @@ Load the component on your page:
 
     <date-control></date-control>
 
+You can see the controls in a browser by running `yarn serve` and loading `http://localhost:8080`.

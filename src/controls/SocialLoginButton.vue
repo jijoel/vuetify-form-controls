@@ -6,7 +6,7 @@
     </v-icon>
   </v-btn>
   <span>
-    {{ $t('login_with') }} {{ name }}
+    Login with {{ name }}
   </span>
 </v-tooltip>
 </template>

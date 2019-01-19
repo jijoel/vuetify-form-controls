@@ -6,6 +6,8 @@
   "license": "MIT",
   "main": "./dist/vuetify-form-controls.js",
   "scripts": {
+    "serve": "vue-cli-service serve",
+    "lint": "vue-cli-service lint",
     "build": "vue-cli-service build --target lib ./src/index.js",
     "test": "vue-cli-service test:unit",
     "watch": "vue-cli-service test:unit --watch"

@@ -4,7 +4,6 @@ module.exports = {
     config.externals = {
        ...config.externals,
       'axios': 'axios',
-      'vuetify': 'vuetify'
     }
   }
 }

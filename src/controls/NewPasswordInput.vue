@@ -8,7 +8,7 @@
   :label="label"
   :hint="message"
   :persistentHint="true"
-  :loading="!!value.length"
+  :loading="loading"
 >
   <v-progress-linear
     slot="progress"
@@ -27,7 +27,7 @@
 // hibp - has the enterd password been pwned? How often?
 const strengthCheckers = {
   zxcvbn: 'https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js',
-  hibp: 'https://unpkg.com/hibp@7.1.3/dist/hibp.min.js',
+  hibp: 'https://unpkg.com/hibp@7.3.0/dist/hibp.min.js',
 }
 import ChildControl from '../mixins/ChildControl'
 import PasswordInput from './PasswordInput'
@@ -64,6 +64,9 @@ export default {
     },
     color () {
       return ['error', 'warning', 'success'][Math.floor(this.progress / 40)]
+    },
+    loading() {
+      return !! (this.value && this.value.length)
     },
     message() {
       var message = ''
@@ -106,8 +109,11 @@ export default {
         : {score: 0, feedback: {warning: null, suggestions: []}}
     },
     checkPasswordPwned() {
-      if (!this.value || typeof hibp !== 'function')
+      if (typeof hibp !== 'object') {
+        console.log('hibp service not found')
         return
+      }
+      if (!this.value) return
 
       hibp.pwnedPassword(this.value)
       .then(n => {
